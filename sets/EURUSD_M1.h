@@ -10,7 +10,6 @@ struct Stg_WPR_EURUSD_M1_Params : Stg_WPR_Params {
     symbol = "EURUSD";
     tf = PERIOD_M1;
     WPR_Period = 32;
-    WPR_Applied_Price = 3;
     WPR_Shift = 0;
     WPR_SignalOpenMethod = 0;
     WPR_SignalOpenLevel = 36;

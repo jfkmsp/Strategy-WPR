@@ -28,7 +28,6 @@ INPUT double WPR_MaxSpread = 6.0;                               // Max spread to
 // Struct to define strategy parameters to override.
 struct Stg_WPR_Params : Stg_Params {
   unsigned int WPR_Period;
-  ENUM_APPLIED_PRICE WPR_Applied_Price;
   int WPR_Shift;
   int WPR_SignalOpenMethod;
   double WPR_SignalOpenLevel;
@@ -41,7 +40,6 @@ struct Stg_WPR_Params : Stg_Params {
   // Constructor: Set default param values.
   Stg_WPR_Params()
       : WPR_Period(::WPR_Period),
-        WPR_Applied_Price(::WPR_Applied_Price),
         WPR_Shift(::WPR_Shift),
         WPR_SignalOpenMethod(::WPR_SignalOpenMethod),
         WPR_SignalOpenLevel(::WPR_SignalOpenLevel),
@@ -95,9 +93,9 @@ class Stg_WPR : public Strategy {
     }
     // Initialize strategy parameters.
     ChartParams cparams(_tf);
-    WPR_Params adx_params(_params.WPR_Period, _params.WPR_Applied_Price);
-    IndicatorParams adx_iparams(10, INDI_WPR);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_WPR(adx_params, adx_iparams, cparams), NULL, NULL);
+    WPR_Params wpr_params(_params.WPR_Period);
+    IndicatorParams wpr_iparams(10, INDI_WPR);
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_WPR(wpr_params, wpr_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.WPR_SignalOpenMethod, _params.WPR_SignalOpenLevel, _params.WPR_SignalCloseMethod,
@@ -115,26 +113,24 @@ class Stg_WPR : public Strategy {
    *   _cmd (int) - type of trade order command
    *   period (int) - period to check for
    *   _method (int) - signal method to use by using bitwise AND operation
-   *   _level1 (double) - signal level to consider the signal
+   *   _level (double) - signal level to consider the signal
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
     bool _result = false;
     double wpr_0 = ((Indi_WPR *)this.Data()).GetValue(0);
     double wpr_1 = ((Indi_WPR *)this.Data()).GetValue(1);
     double wpr_2 = ((Indi_WPR *)this.Data()).GetValue(2);
-    if (_level1 == EMPTY) _level1 = GetSignalLevel1();
-    if (_level2 == EMPTY) _level2 = GetSignalLevel2();
 
     switch (_cmd) {
       case ORDER_TYPE_BUY:
-        _result = wpr_0 > 50 + _level1;
+        _result = wpr_0 > 50 + _level;
         if (_method != 0) {
           if (METHOD(_method, 0)) _result &= wpr_0 < wpr_1;
           if (METHOD(_method, 1)) _result &= wpr_1 < wpr_2;
-          if (METHOD(_method, 2)) _result &= wpr_1 > 50 + _level1;
-          if (METHOD(_method, 3)) _result &= wpr_2 > 50 + _level1;
+          if (METHOD(_method, 2)) _result &= wpr_1 > 50 + _level;
+          if (METHOD(_method, 3)) _result &= wpr_2 > 50 + _level;
           if (METHOD(_method, 4)) _result &= wpr_1 - wpr_0 > wpr_2 - wpr_1;
-          if (METHOD(_method, 5)) _result &= wpr_1 > 50 + _level1 + _level1 / 2;
+          if (METHOD(_method, 5)) _result &= wpr_1 > 50 + _level + _level / 2;
         }
         /* @todo
            //30. Williams Percent Range
@@ -147,14 +143,14 @@ class Stg_WPR : public Strategy {
         */
         break;
       case ORDER_TYPE_SELL:
-        _result = wpr_0 < 50 - _level1;
+        _result = wpr_0 < 50 - _level;
         if (_method != 0) {
           if (METHOD(_method, 0)) _result &= wpr_0 > wpr_1;
           if (METHOD(_method, 1)) _result &= wpr_1 > wpr_2;
-          if (METHOD(_method, 2)) _result &= wpr_1 < 50 - _level1;
-          if (METHOD(_method, 3)) _result &= wpr_2 < 50 - _level1;
+          if (METHOD(_method, 2)) _result &= wpr_1 < 50 - _level;
+          if (METHOD(_method, 3)) _result &= wpr_2 < 50 - _level;
           if (METHOD(_method, 4)) _result &= wpr_0 - wpr_1 > wpr_1 - wpr_2;
-          if (METHOD(_method, 5)) _result &= wpr_1 > 50 - _level1 - _level1 / 2;
+          if (METHOD(_method, 5)) _result &= wpr_1 > 50 - _level - _level / 2;
         }
         break;
     }
