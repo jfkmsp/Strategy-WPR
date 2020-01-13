@@ -12,15 +12,12 @@ struct Stg_WPR_EURUSD_M1_Params : Stg_WPR_Params {
     WPR_Period = 32;
     WPR_Applied_Price = 3;
     WPR_Shift = 0;
-    WPR_TrailingStopMethod = 6;
-    WPR_TrailingProfitMethod = 11;
+    WPR_SignalOpenMethod = 0;
     WPR_SignalOpenLevel = 36;
-    WPR_SignalBaseMethod = 0;
-    WPR_SignalOpenMethod1 = 0;
-    WPR_SignalOpenMethod2 = 0;
+    WPR_SignalCloseMethod = 0;
     WPR_SignalCloseLevel = 36;
-    WPR_SignalCloseMethod1 = 0;
-    WPR_SignalCloseMethod2 = 0;
+    WPR_PriceLimitMethod = 0;
+    WPR_PriceLimitLevel = 0;
     WPR_MaxSpread = 2;
   }
 };
