@@ -15,14 +15,14 @@
 
 // User input params.
 INPUT string __WPR_Parameters__ = "-- WPR strategy params --";  // >>> WPR <<<
-INPUT int WPR_Period = 11;                                      // Period
+INPUT int WPR_Period = 14;                                      // Period
 INPUT int WPR_Shift = 0;                                        // Shift
-INPUT int WPR_SignalOpenMethod = -46;                           // Signal open method (-63-63)
-INPUT double WPR_SignalOpenLevel = 20;                          // Signal open level
-INPUT int WPR_SignalOpenFilterMethod = 20;                      // Signal open filter method
-INPUT int WPR_SignalOpenBoostMethod = 20;                       // Signal open boost method
-INPUT int WPR_SignalCloseMethod = -46;                          // Signal close method (-63-63)
-INPUT int WPR_SignalCloseLevel = 20;                            // Signal close level
+INPUT int WPR_SignalOpenMethod = 0;                             // Signal open method (-63-63)
+INPUT double WPR_SignalOpenLevel = 0;                           // Signal open level
+INPUT int WPR_SignalOpenFilterMethod = 0;                       // Signal open filter method
+INPUT int WPR_SignalOpenBoostMethod = 0;                        // Signal open boost method
+INPUT int WPR_SignalCloseMethod = 0;                            // Signal close method (-63-63)
+INPUT int WPR_SignalCloseLevel = 0;                             // Signal close level
 INPUT int WPR_PriceLimitMethod = 0;                             // Price limit method
 INPUT double WPR_PriceLimitLevel = 0;                           // Price limit level
 INPUT double WPR_MaxSpread = 6.0;                               // Max spread to trade (pips)
@@ -100,43 +100,43 @@ class Stg_WPR : public Strategy {
    *   _level (double) - signal level to consider the signal
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    bool _result = false;
-    double wpr_0 = ((Indi_WPR *)this.Data()).GetValue(0);
-    double wpr_1 = ((Indi_WPR *)this.Data()).GetValue(1);
-    double wpr_2 = ((Indi_WPR *)this.Data()).GetValue(2);
-
-    switch (_cmd) {
-      case ORDER_TYPE_BUY:
-        _result = wpr_0 > 50 + _level;
-        if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= wpr_0 < wpr_1;
-          if (METHOD(_method, 1)) _result &= wpr_1 < wpr_2;
-          if (METHOD(_method, 2)) _result &= wpr_1 > 50 + _level;
-          if (METHOD(_method, 3)) _result &= wpr_2 > 50 + _level;
-          if (METHOD(_method, 4)) _result &= wpr_1 - wpr_0 > wpr_2 - wpr_1;
-          if (METHOD(_method, 5)) _result &= wpr_1 > 50 + _level + _level / 2;
-        }
-        /* @todo
-           //30. Williams Percent Range
-           //Buy: crossing -80 upwards
-           //Sell: crossing -20 downwards
-           if (iWPR(NULL,piwpr,piwprbar,1)<-80&&iWPR(NULL,piwpr,piwprbar,0)>=-80)
-           {f30=1;}
-           if (iWPR(NULL,piwpr,piwprbar,1)>-20&&iWPR(NULL,piwpr,piwprbar,0)<=-20)
-           {f30=-1;}
-        */
-        break;
-      case ORDER_TYPE_SELL:
-        _result = wpr_0 < 50 - _level;
-        if (_method != 0) {
-          if (METHOD(_method, 0)) _result &= wpr_0 > wpr_1;
-          if (METHOD(_method, 1)) _result &= wpr_1 > wpr_2;
-          if (METHOD(_method, 2)) _result &= wpr_1 < 50 - _level;
-          if (METHOD(_method, 3)) _result &= wpr_2 < 50 - _level;
-          if (METHOD(_method, 4)) _result &= wpr_0 - wpr_1 > wpr_1 - wpr_2;
-          if (METHOD(_method, 5)) _result &= wpr_1 > 50 - _level - _level / 2;
-        }
-        break;
+    Indicator *_indi = Data();
+    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _result = _is_valid;
+    if (_is_valid) {
+      switch (_cmd) {
+        case ORDER_TYPE_BUY:
+          _result = _indi[CURR].value[0] > 50 + _level;
+          if (_method != 0) {
+            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] < _indi[PREV].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] < _indi[PPREV].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] > 50 + _level;
+            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] > 50 + _level;
+            if (METHOD(_method, 4)) _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > 50 + _level + _level / 2;
+          }
+          /* @todo
+             //30. Williams Percent Range
+             //Buy: crossing -80 upwards
+             //Sell: crossing -20 downwards
+             if (iWPR(NULL,piwpr,piwprbar,1)<-80&&iWPR(NULL,piwpr,piwprbar,0)>=-80)
+             {f30=1;}
+             if (iWPR(NULL,piwpr,piwprbar,1)>-20&&iWPR(NULL,piwpr,piwprbar,0)<=-20)
+             {f30=-1;}
+          */
+          break;
+        case ORDER_TYPE_SELL:
+          _result = _indi[CURR].value[0] < 50 - _level;
+          if (_method != 0) {
+            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] > _indi[PREV].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] > _indi[PPREV].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] < 50 - _level;
+            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] < 50 - _level;
+            if (METHOD(_method, 4)) _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > 50 - _level - _level / 2;
+          }
+          break;
+      }
     }
     return _result;
   }
@@ -185,13 +185,13 @@ class Stg_WPR : public Strategy {
    */
   double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
     double _trail = _level * Market().GetPipSize();
-    int _direction = Order::OrderDirection(_cmd) * (_mode == ORDER_TYPE_SL ? -1 : 1);
+    int _direction = Order::OrderDirection(_cmd, _mode);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
     switch (_method) {
-      case 0: {
+      case 0:
         // @todo
-      }
+        break;
     }
     return _result;
   }
