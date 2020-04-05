@@ -84,6 +84,7 @@ class Stg_WPR : public Strategy {
     sparams.SetSignals(_params.WPR_SignalOpenMethod, _params.WPR_SignalOpenLevel, _params.WPR_SignalCloseMethod,
                        _params.WPR_SignalOpenFilterMethod, _params.WPR_SignalOpenBoostMethod,
                        _params.WPR_SignalCloseLevel);
+    sparams.SetPriceLimits(_params.WPR_PriceLimitMethod, _params.WPR_PriceLimitLevel);
     sparams.SetMaxSpread(_params.WPR_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_WPR(sparams, "WPR");
@@ -116,7 +117,8 @@ class Stg_WPR : public Strategy {
             if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] > level;
             // Buy: crossing level upwards.
             if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] > level;
-            if (METHOD(_method, 4)) _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
+            if (METHOD(_method, 4))
+              _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
             if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > level + _level / 2;
           }
           /* @todo
@@ -137,7 +139,8 @@ class Stg_WPR : public Strategy {
             if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] < level;
             // Sell: crossing level downwards.
             if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] < level;
-            if (METHOD(_method, 4)) _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
+            if (METHOD(_method, 4))
+              _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
             if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > level - _level / 2;
           }
           break;
