@@ -79,7 +79,7 @@ class Stg_WPR : public Strategy {
     WPRParams wpr_params(_params.WPR_Period);
     wpr_params.SetTf(_tf);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_WPR(wpr_params), NULL, NULL);
-    sparams.logger.SetLevel(_log_level);
+    sparams.logger.Ptr().SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.WPR_SignalOpenMethod, _params.WPR_SignalOpenLevel, _params.WPR_SignalCloseMethod,
                        _params.WPR_SignalOpenFilterMethod, _params.WPR_SignalOpenBoostMethod,
