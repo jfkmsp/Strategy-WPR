@@ -7,14 +7,14 @@
 INPUT int WPR_Period = 14;                 // Period
 INPUT int WPR_Shift = 0;                   // Shift
 INPUT int WPR_SignalOpenMethod = 0;        // Signal open method (-63-63)
-INPUT float WPR_SignalOpenLevel = 0;      // Signal open level
+INPUT float WPR_SignalOpenLevel = 0;       // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 0;  // Signal open filter method
 INPUT int WPR_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-63-63)
-INPUT int WPR_SignalCloseLevel = 0;        // Signal close level
+INPUT float WPR_SignalCloseLevel = 0;      // Signal close level
 INPUT int WPR_PriceLimitMethod = 0;        // Price limit method
-INPUT float WPR_PriceLimitLevel = 0;      // Price limit level
-INPUT float WPR_MaxSpread = 6.0;          // Max spread to trade (pips)
+INPUT float WPR_PriceLimitLevel = 0;       // Price limit level
+INPUT float WPR_MaxSpread = 6.0;           // Max spread to trade (pips)
 
 // Includes.
 #include <EA31337-classes/Indicators/Indi_WPR.mqh>
@@ -25,14 +25,14 @@ struct Stg_WPR_Params : StgParams {
   unsigned int WPR_Period;
   int WPR_Shift;
   int WPR_SignalOpenMethod;
-  double WPR_SignalOpenLevel;
+  float WPR_SignalOpenLevel;
   int WPR_SignalOpenFilterMethod;
   int WPR_SignalOpenBoostMethod;
   int WPR_SignalCloseMethod;
-  double WPR_SignalCloseLevel;
+  float WPR_SignalCloseLevel;
   int WPR_PriceLimitMethod;
-  double WPR_PriceLimitLevel;
-  double WPR_MaxSpread;
+  float WPR_PriceLimitLevel;
+  float WPR_MaxSpread;
 
   // Constructor: Set default param values.
   Stg_WPR_Params()
@@ -169,6 +169,6 @@ class Stg_WPR : public Strategy {
       }
       _result += _trail * _direction;
     }
-    return _result;
+    return (float)_result;
   }
 };
