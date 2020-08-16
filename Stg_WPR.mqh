@@ -3,9 +3,12 @@
  * Implements WPR strategy based on the Larry Williams' Percent Range indicator.
  */
 
+// Includes.
+#include <EA31337-classes/Indicators/Indi_WPR.mqh>
+#include <EA31337-classes/Strategy.mqh>
+
 // User input params.
-INPUT int WPR_Period = 14;                 // Period
-INPUT int WPR_Shift = 0;                   // Shift
+INPUT float WPR_LotSize = 0;               // Lot size
 INPUT int WPR_SignalOpenMethod = 0;        // Signal open method (-63-63)
 INPUT float WPR_SignalOpenLevel = 0;       // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 0;  // Signal open filter method
@@ -14,44 +17,51 @@ INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-63-63)
 INPUT float WPR_SignalCloseLevel = 0;      // Signal close level
 INPUT int WPR_PriceLimitMethod = 0;        // Price limit method
 INPUT float WPR_PriceLimitLevel = 0;       // Price limit level
+INPUT int WPR_TickFilterMethod = 0;        // Tick filter method
 INPUT float WPR_MaxSpread = 6.0;           // Max spread to trade (pips)
+INPUT int WPR_Shift = 0;                   // Shift
+INPUT string __WPR_Indi_WPR_Parameters__ =
+    "-- WPR strategy: WPR indicator params --";  // >>> WPR strategy: WPR indicator <<<
+INPUT int Indi_WPR_Period = 14;                  // Period
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_WPR.mqh>
-#include <EA31337-classes/Strategy.mqh>
+// Structs.
+
+// Defines struct with default user indicator values.
+struct Indi_WPR_Params_Defaults : WPRParams {
+  Indi_WPR_Params_Defaults() : WPRParams(::Indi_WPR_Period) {}
+} indi_wpr_defaults;
+
+// Defines struct to store indicator parameter values.
+struct Indi_WPR_Params : public WPRParams {
+  // Struct constructors.
+  void Indi_WPR_Params(WPRParams &_params, ENUM_TIMEFRAMES _tf) : WPRParams(_params, _tf) {}
+};
+
+// Defines struct with default user strategy values.
+struct Stg_WPR_Params_Defaults : StgParams {
+  Stg_WPR_Params_Defaults()
+      : StgParams(::WPR_SignalOpenMethod, ::WPR_SignalOpenFilterMethod, ::WPR_SignalOpenLevel,
+                  ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseLevel, ::WPR_PriceLimitMethod,
+                  ::WPR_PriceLimitLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift) {}
+} stg_wpr_defaults;
 
 // Struct to define strategy parameters to override.
 struct Stg_WPR_Params : StgParams {
-  unsigned int WPR_Period;
-  int WPR_Shift;
-  int WPR_SignalOpenMethod;
-  float WPR_SignalOpenLevel;
-  int WPR_SignalOpenFilterMethod;
-  int WPR_SignalOpenBoostMethod;
-  int WPR_SignalCloseMethod;
-  float WPR_SignalCloseLevel;
-  int WPR_PriceLimitMethod;
-  float WPR_PriceLimitLevel;
-  float WPR_MaxSpread;
+  Indi_WPR_Params iparams;
+  StgParams sparams;
 
-  // Constructor: Set default param values.
-  Stg_WPR_Params()
-      : WPR_Period(::WPR_Period),
-        WPR_Shift(::WPR_Shift),
-        WPR_SignalOpenMethod(::WPR_SignalOpenMethod),
-        WPR_SignalOpenLevel(::WPR_SignalOpenLevel),
-        WPR_SignalOpenFilterMethod(::WPR_SignalOpenFilterMethod),
-        WPR_SignalOpenBoostMethod(::WPR_SignalOpenBoostMethod),
-        WPR_SignalCloseMethod(::WPR_SignalCloseMethod),
-        WPR_SignalCloseLevel(::WPR_SignalCloseLevel),
-        WPR_PriceLimitMethod(::WPR_PriceLimitMethod),
-        WPR_PriceLimitLevel(::WPR_PriceLimitLevel),
-        WPR_MaxSpread(::WPR_MaxSpread) {}
+  // Struct constructors.
+  Stg_WPR_Params(Indi_WPR_Params &_iparams, StgParams &_sparams)
+      : iparams(indi_wpr_defaults, _iparams.tf), sparams(stg_wpr_defaults) {
+    iparams = _iparams;
+    sparams = _sparams;
+  }
 };
 
 // Loads pair specific param values.
 #include "sets/EURUSD_H1.h"
 #include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_H8.h"
 #include "sets/EURUSD_M1.h"
 #include "sets/EURUSD_M15.h"
 #include "sets/EURUSD_M30.h"
@@ -63,24 +73,24 @@ class Stg_WPR : public Strategy {
 
   static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Stg_WPR_Params _params;
+    Indi_WPR_Params _indi_params(indi_wpr_defaults, _tf);
+    StgParams _stg_params(stg_wpr_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Stg_WPR_Params>(_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1,
-                                    stg_wpr_h4, stg_wpr_h4);
+      SetParamsByTf<Indi_WPR_Params>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30,
+                                     indi_wpr_h1, indi_wpr_h4, indi_wpr_h8);
+      SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1,
+                               stg_wpr_h4, stg_wpr_h8);
     }
+    // Initialize indicator.
+    WPRParams wpr_params(_indi_params);
+    _stg_params.SetIndicator(new Indi_WPR(_indi_params));
     // Initialize strategy parameters.
-    WPRParams wpr_params(_params.WPR_Period);
-    wpr_params.SetTf(_tf);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_WPR(wpr_params), NULL, NULL);
-    sparams.logger.Ptr().SetLevel(_log_level);
-    sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.WPR_SignalOpenMethod, _params.WPR_SignalOpenLevel, _params.WPR_SignalCloseMethod,
-                       _params.WPR_SignalOpenFilterMethod, _params.WPR_SignalOpenBoostMethod,
-                       _params.WPR_SignalCloseLevel);
-    sparams.SetPriceLimits(_params.WPR_PriceLimitMethod, _params.WPR_PriceLimitLevel);
-    sparams.SetMaxSpread(_params.WPR_MaxSpread);
+    _stg_params.GetLog().SetLevel(_log_level);
+    _stg_params.SetMagicNo(_magic_no);
+    _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
-    Strategy *_strat = new Stg_WPR(sparams, "WPR");
+    Strategy *_strat = new Stg_WPR(_stg_params, "WPR");
+    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
@@ -155,15 +165,15 @@ class Stg_WPR : public Strategy {
     if (_is_valid) {
       switch (_method) {
         case 0: {
-          int _bar_count = (int)_level * (int)_indi.GetPeriod();
-          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count0 = (int)_level * (int)_indi.GetPeriod();
+          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count0))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count0));
           break;
         }
         case 1: {
-          int _bar_count = (int)_level * (int)_indi.GetPeriod() * 2;
-          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2;
+          _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
       }

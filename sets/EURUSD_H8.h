@@ -4,14 +4,14 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_WPR_Params_M30 : Indi_WPR_Params {
-  Indi_WPR_Params_M30() : Indi_WPR_Params(indi_wpr_defaults, PERIOD_M30) { shift = 0; }
-} indi_wpr_m30;
+struct Indi_WPR_Params_H8 : Indi_WPR_Params {
+  Indi_WPR_Params_H8() : Indi_WPR_Params(indi_wpr_defaults, PERIOD_H8) { shift = 0; }
+} indi_wpr_h8;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
-struct Stg_WPR_Params_M30 : StgParams {
+struct Stg_WPR_Params_H8 : StgParams {
   // Struct constructor.
-  Stg_WPR_Params_M30() : StgParams(stg_wpr_defaults) {
+  Stg_WPR_Params_H8() : StgParams(stg_wpr_defaults) {
     lot_size = 0;
     signal_open_method = 0;
     signal_open_filter = 1;
@@ -24,4 +24,4 @@ struct Stg_WPR_Params_M30 : StgParams {
     tick_filter_method = 1;
     max_spread = 0;
   }
-} stg_wpr_m30;
+} stg_wpr_h8;
