@@ -15,8 +15,8 @@ INPUT int WPR_SignalOpenFilterMethod = 0;  // Signal open filter method
 INPUT int WPR_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-63-63)
 INPUT float WPR_SignalCloseLevel = 0;      // Signal close level
-INPUT int WPR_PriceLimitMethod = 0;        // Price limit method
-INPUT float WPR_PriceLimitLevel = 0;       // Price limit level
+INPUT int WPR_PriceStopMethod = 0;         // Price stop method
+INPUT float WPR_PriceStopLevel = 0;        // Price stop level
 INPUT int WPR_TickFilterMethod = 0;        // Tick filter method
 INPUT float WPR_MaxSpread = 6.0;           // Max spread to trade (pips)
 INPUT int WPR_Shift = 0;                   // Shift
@@ -41,8 +41,8 @@ struct Indi_WPR_Params : public WPRParams {
 struct Stg_WPR_Params_Defaults : StgParams {
   Stg_WPR_Params_Defaults()
       : StgParams(::WPR_SignalOpenMethod, ::WPR_SignalOpenFilterMethod, ::WPR_SignalOpenLevel,
-                  ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseLevel, ::WPR_PriceLimitMethod,
-                  ::WPR_PriceLimitLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift) {}
+                  ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseLevel, ::WPR_PriceStopMethod,
+                  ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift) {}
 } stg_wpr_defaults;
 
 // Struct to define strategy parameters to override.
@@ -153,9 +153,9 @@ class Stg_WPR : public Strategy {
   }
 
   /**
-   * Gets price limit value for profit take or stop loss.
+   * Gets price stop value for profit take or stop loss.
    */
-  float PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0) {
+  float PriceStop(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0) {
     Indi_WPR *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     double _trail = _level * Market().GetPipSize();
