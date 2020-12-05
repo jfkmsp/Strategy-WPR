@@ -112,17 +112,16 @@ class Stg_WPR : public Strategy {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
           // Buy: Value below level.
-          _result = _indi[CURR].value[0] < level;
+          _result = _indi[CURR][0] < level;
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] < _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] < _indi[PPREV].value[0];
+            if (METHOD(_method, 0)) _result &= _indi[CURR][0] < _indi[PREV][0];
+            if (METHOD(_method, 1)) _result &= _indi[PREV][0] < _indi[PPREV][0];
             // Buy: crossing level upwards.
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] > level;
+            if (METHOD(_method, 2)) _result &= _indi[PREV][0] > level;
             // Buy: crossing level upwards.
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] > level;
-            if (METHOD(_method, 4))
-              _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > level + _level / 2;
+            if (METHOD(_method, 3)) _result &= _indi[PPREV][0] > level;
+            if (METHOD(_method, 4)) _result &= _indi[PREV][0] - _indi[CURR][0] > _indi[PPREV][0] - _indi[PREV][0];
+            if (METHOD(_method, 5)) _result &= _indi[PREV][0] > level + _level / 2;
           }
           /* @todo
              //30. Williams Percent Range
@@ -134,17 +133,16 @@ class Stg_WPR : public Strategy {
           break;
         case ORDER_TYPE_SELL:
           // Sell: Value above level.
-          _result = _indi[CURR].value[0] > level;
+          _result = _indi[CURR][0] > level;
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] > _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] > _indi[PPREV].value[0];
+            if (METHOD(_method, 0)) _result &= _indi[CURR][0] > _indi[PREV][0];
+            if (METHOD(_method, 1)) _result &= _indi[PREV][0] > _indi[PPREV][0];
             // Sell: crossing level downwards.
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] < level;
+            if (METHOD(_method, 2)) _result &= _indi[PREV][0] < level;
             // Sell: crossing level downwards.
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] < level;
-            if (METHOD(_method, 4))
-              _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PREV].value[0] > level - _level / 2;
+            if (METHOD(_method, 3)) _result &= _indi[PPREV][0] < level;
+            if (METHOD(_method, 4)) _result &= _indi[CURR][0] - _indi[PREV][0] > _indi[PREV][0] - _indi[PPREV][0];
+            if (METHOD(_method, 5)) _result &= _indi[PREV][0] > level - _level / 2;
           }
           break;
       }
