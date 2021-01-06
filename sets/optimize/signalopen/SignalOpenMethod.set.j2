@@ -1,6 +1,6 @@
 WPR_Indi_WPR_Applied_Price={{ applied_price | replace("(ENUM_APPLIED_PRICE)", "") | int | default(0) }}
 WPR_Indi_WPR_MA_Method={{ ma_method | default(0) }}
-WPR_Indi_WPR_Period={{ period | default(4) }}
+WPR_Indi_WPR_Period={{ (period | default(0) | int) }}
 WPR_Indi_WPR_Shift={{ shift | default(0) }}
 WPR_LotSize={{ lot_size | default(0) }}
 WPR_PriceStopLevel={{ price_stop_level | replace("(float)", "") | float | default(0) }}
