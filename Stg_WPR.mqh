@@ -19,20 +19,15 @@ INPUT int WPR_Shift = 0;                   // Shift
 INPUT int WPR_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
 INPUT string __WPR_Indi_WPR_Parameters__ =
     "-- WPR strategy: WPR indicator params --";  // >>> WPR strategy: WPR indicator <<<
-INPUT int Indi_WPR_Period = 14;                  // Period
+INPUT int WPR_Indi_WPR_Period = 14;              // Period
+INPUT int WPR_Indi_WPR_Shift = 0;                // Shift
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_WPR_Params_Defaults : WPRParams {
-  Indi_WPR_Params_Defaults() : WPRParams(::Indi_WPR_Period) {}
+  Indi_WPR_Params_Defaults() : WPRParams(::WPR_Indi_WPR_Period, ::WPR_Indi_WPR_Shift) {}
 } indi_wpr_defaults;
-
-// Defines struct to store indicator parameter values.
-struct Indi_WPR_Params : public WPRParams {
-  // Struct constructors.
-  void Indi_WPR_Params(WPRParams &_params, ENUM_TIMEFRAMES _tf) : WPRParams(_params, _tf) {}
-};
 
 // Defines struct with default user strategy values.
 struct Stg_WPR_Params_Defaults : StgParams {
@@ -44,11 +39,11 @@ struct Stg_WPR_Params_Defaults : StgParams {
 
 // Struct to define strategy parameters to override.
 struct Stg_WPR_Params : StgParams {
-  Indi_WPR_Params iparams;
+  WPRParams iparams;
   StgParams sparams;
 
   // Struct constructors.
-  Stg_WPR_Params(Indi_WPR_Params &_iparams, StgParams &_sparams)
+  Stg_WPR_Params(WPRParams &_iparams, StgParams &_sparams)
       : iparams(indi_wpr_defaults, _iparams.tf), sparams(stg_wpr_defaults) {
     iparams = _iparams;
     sparams = _sparams;
@@ -70,11 +65,11 @@ class Stg_WPR : public Strategy {
 
   static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Indi_WPR_Params _indi_params(indi_wpr_defaults, _tf);
+    WPRParams _indi_params(indi_wpr_defaults, _tf);
     StgParams _stg_params(stg_wpr_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Indi_WPR_Params>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30,
-                                     indi_wpr_h1, indi_wpr_h4, indi_wpr_h8);
+      SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
+                               indi_wpr_h4, indi_wpr_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1,
                                stg_wpr_h4, stg_wpr_h8);
     }

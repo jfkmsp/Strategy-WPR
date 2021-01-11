@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_WPR_Params_{{ Timeframe }} : Indi_WPR_Params {
-  Indi_WPR_Params_{{ Timeframe }}() : Indi_WPR_Params(indi_wpr_defaults, PERIOD_{{ Timeframe }}) {
+struct Indi_WPR_Params_{{ Timeframe }} : WPRParams {
+  Indi_WPR_Params_{{ Timeframe }}() : WPRParams(indi_wpr_defaults, PERIOD_{{ Timeframe }}) {
     applied_price = (ENUM_APPLIED_PRICE){{ WPR_Indi_WPR_Applied_Price | default(0) }};
     ma_method = {{ WPR_Indi_WPR_MA_Method | default(0) }};
     period = {{ WPR_Indi_WPR_Period | default(0) }};

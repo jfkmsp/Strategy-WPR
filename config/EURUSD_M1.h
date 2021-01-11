@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_WPR_Params_M1 : Indi_WPR_Params {
-  Indi_WPR_Params_M1() : Indi_WPR_Params(indi_wpr_defaults, PERIOD_M1) { shift = 0; }
+struct Indi_WPR_Params_M1 : WPRParams {
+  Indi_WPR_Params_M1() : WPRParams(indi_wpr_defaults, PERIOD_M1) { shift = 0; }
 } indi_wpr_m1;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
