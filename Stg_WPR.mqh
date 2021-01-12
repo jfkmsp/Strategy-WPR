@@ -5,12 +5,12 @@
 
 // User input params.
 INPUT float WPR_LotSize = 0;               // Lot size
-INPUT int WPR_SignalOpenMethod = 0;        // Signal open method (-63-63)
-INPUT float WPR_SignalOpenLevel = 0.0f;    // Signal open level
+INPUT int WPR_SignalOpenMethod = 0;        // Signal open method (-7-7)
+INPUT float WPR_SignalOpenLevel = 20;      // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 1;  // Signal open filter method
 INPUT int WPR_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-63-63)
-INPUT float WPR_SignalCloseLevel = 0.0f;   // Signal close level
+INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-7-7)
+INPUT float WPR_SignalCloseLevel = 20;     // Signal close level
 INPUT int WPR_PriceStopMethod = 0;         // Price stop method
 INPUT float WPR_PriceStopLevel = 0;        // Price stop level
 INPUT int WPR_TickFilterMethod = 1;        // Tick filter method
@@ -104,16 +104,13 @@ class Stg_WPR : public Strategy {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
           // Buy: Value below level.
-          _result = _indi[CURR][0] < level;
+          _result &= _indi[PREV][0] < level || _indi[PPREV][0] < level;
+          _result &= _indi.IsIncreasing(2);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR][0] < _indi[PREV][0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV][0] < _indi[PPREV][0];
+            if (METHOD(_method, 0)) _result &= _indi.IsIncreasing(3);
             // Buy: crossing level upwards.
-            if (METHOD(_method, 2)) _result &= _indi[PREV][0] > level;
-            // Buy: crossing level upwards.
-            if (METHOD(_method, 3)) _result &= _indi[PPREV][0] > level;
-            if (METHOD(_method, 4)) _result &= _indi[PREV][0] - _indi[CURR][0] > _indi[PPREV][0] - _indi[PREV][0];
-            if (METHOD(_method, 5)) _result &= _indi[PREV][0] > level + _level / 2;
+            if (METHOD(_method, 1)) _result &= _indi[PPREV][0] > level || _indi[PREV][0] > level;
+            if (METHOD(_method, 2)) _result &= _indi[PREV][0] - _indi[CURR][0] > _indi[PPREV][0] - _indi[PREV][0];
           }
           /* @todo
              //30. Williams Percent Range
@@ -125,16 +122,13 @@ class Stg_WPR : public Strategy {
           break;
         case ORDER_TYPE_SELL:
           // Sell: Value above level.
-          _result = _indi[CURR][0] > level;
+          _result &= _indi[PREV][0] > level || _indi[PPREV][0] > level;
+          _result &= _indi.IsDecreasing(2);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR][0] > _indi[PREV][0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV][0] > _indi[PPREV][0];
+            if (METHOD(_method, 0)) _result &= _indi.IsDecreasing(3);
             // Sell: crossing level downwards.
-            if (METHOD(_method, 2)) _result &= _indi[PREV][0] < level;
-            // Sell: crossing level downwards.
-            if (METHOD(_method, 3)) _result &= _indi[PPREV][0] < level;
-            if (METHOD(_method, 4)) _result &= _indi[CURR][0] - _indi[PREV][0] > _indi[PREV][0] - _indi[PPREV][0];
-            if (METHOD(_method, 5)) _result &= _indi[PREV][0] > level - _level / 2;
+            if (METHOD(_method, 1)) _result &= _indi[PPREV][0] < level || _indi[PREV][0] < level;
+            if (METHOD(_method, 2)) _result &= _indi[CURR][0] - _indi[PREV][0] > _indi[PREV][0] - _indi[PPREV][0];
           }
           break;
       }
