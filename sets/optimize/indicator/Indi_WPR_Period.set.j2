@@ -1,4 +1,4 @@
-WPR_Indi_WPR_Period,1={{ (period | default(0) | int) - 4 }}
+WPR_Indi_WPR_Period,1={{ [2, (period | default(2) | int) - 4] | max }}
 WPR_Indi_WPR_Period,2=2
 WPR_Indi_WPR_Period,3={{ (period | default(0) | int) + 4 }}
 WPR_Indi_WPR_Period,F=1
