@@ -5,7 +5,10 @@
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_WPR_Params_M5 : WPRParams {
-  Indi_WPR_Params_M5() : WPRParams(indi_wpr_defaults, PERIOD_M5) { shift = 0; }
+  Indi_WPR_Params_M5() : WPRParams(indi_wpr_defaults, PERIOD_M5) {
+    period = 4;
+    shift = 0;
+  }
 } indi_wpr_m5;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
