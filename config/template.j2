@@ -7,7 +7,7 @@
 struct Indi_WPR_Params_{{ Timeframe }} : WPRParams {
   Indi_WPR_Params_{{ Timeframe }}() : WPRParams(indi_wpr_defaults, PERIOD_{{ Timeframe }}) {
     period = {{ WPR_Indi_WPR_Period | default(0) }};
-    shift = {{ WPR_Shift | default(0) }};
+    shift = {{ WPR_Indi_WPR_Shift | default(0) }};
   }
 } indi_wpr_{{ Timeframe | lower }};
 
