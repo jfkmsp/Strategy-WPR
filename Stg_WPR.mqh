@@ -83,7 +83,6 @@ class Stg_WPR : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_WPR(_stg_params, "WPR");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
