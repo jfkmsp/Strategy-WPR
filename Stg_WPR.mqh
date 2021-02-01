@@ -68,12 +68,12 @@ class Stg_WPR : public Strategy {
     // Initialize strategy initial values.
     WPRParams _indi_params(indi_wpr_defaults, _tf);
     StgParams _stg_params(stg_wpr_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
-                               indi_wpr_h4, indi_wpr_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1,
-                               stg_wpr_h4, stg_wpr_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
+                             indi_wpr_h4, indi_wpr_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1, stg_wpr_h4,
+                             stg_wpr_h8);
+#endif
     // Initialize indicator.
     WPRParams wpr_params(_indi_params);
     _stg_params.SetIndicator(new Indi_WPR(_indi_params));
