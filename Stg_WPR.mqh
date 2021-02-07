@@ -4,19 +4,20 @@
  */
 
 // User input params.
-INPUT float WPR_LotSize = 0;               // Lot size
-INPUT int WPR_SignalOpenMethod = 0;        // Signal open method (-7-7)
-INPUT float WPR_SignalOpenLevel = 20;      // Signal open level
-INPUT int WPR_SignalOpenFilterMethod = 1;  // Signal open filter method
-INPUT int WPR_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int WPR_SignalCloseMethod = 0;       // Signal close method (-7-7)
-INPUT float WPR_SignalCloseLevel = 20;     // Signal close level
-INPUT int WPR_PriceStopMethod = 0;         // Price stop method
-INPUT float WPR_PriceStopLevel = 0;        // Price stop level
-INPUT int WPR_TickFilterMethod = 1;        // Tick filter method
-INPUT float WPR_MaxSpread = 4.0;           // Max spread to trade (pips)
-INPUT int WPR_Shift = 0;                   // Shift
-INPUT int WPR_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
+INPUT string __WPR_Parameters__ = "-- WPR strategy params --";  // >>> WPR <<<
+INPUT float WPR_LotSize = 0;                                    // Lot size
+INPUT int WPR_SignalOpenMethod = 0;                             // Signal open method (-7-7)
+INPUT float WPR_SignalOpenLevel = 20;                           // Signal open level
+INPUT int WPR_SignalOpenFilterMethod = 1;                       // Signal open filter method
+INPUT int WPR_SignalOpenBoostMethod = 0;                        // Signal open boost method
+INPUT int WPR_SignalCloseMethod = 0;                            // Signal close method (-7-7)
+INPUT float WPR_SignalCloseLevel = 20;                          // Signal close level
+INPUT int WPR_PriceStopMethod = 0;                              // Price stop method
+INPUT float WPR_PriceStopLevel = 0;                             // Price stop level
+INPUT int WPR_TickFilterMethod = 1;                             // Tick filter method
+INPUT float WPR_MaxSpread = 4.0;                                // Max spread to trade (pips)
+INPUT int WPR_Shift = 0;                                        // Shift
+INPUT int WPR_OrderCloseTime = -20;                             // Order close time in mins (>0) or bars (<0)
 INPUT string __WPR_Indi_WPR_Parameters__ =
     "-- WPR strategy: WPR indicator params --";  // >>> WPR strategy: WPR indicator <<<
 INPUT int WPR_Indi_WPR_Period = 14;              // Period
@@ -67,12 +68,12 @@ class Stg_WPR : public Strategy {
     // Initialize strategy initial values.
     WPRParams _indi_params(indi_wpr_defaults, _tf);
     StgParams _stg_params(stg_wpr_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
-                               indi_wpr_h4, indi_wpr_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1,
-                               stg_wpr_h4, stg_wpr_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
+                             indi_wpr_h4, indi_wpr_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1, stg_wpr_h4,
+                             stg_wpr_h8);
+#endif
     // Initialize indicator.
     WPRParams wpr_params(_indi_params);
     _stg_params.SetIndicator(new Indi_WPR(_indi_params));
@@ -82,7 +83,6 @@ class Stg_WPR : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_WPR(_stg_params, "WPR");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
