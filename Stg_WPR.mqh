@@ -16,7 +16,7 @@ INPUT int WPR_PriceStopMethod = 0;                              // Price stop me
 INPUT float WPR_PriceStopLevel = 0;                             // Price stop level
 INPUT int WPR_TickFilterMethod = 1;                             // Tick filter method
 INPUT float WPR_MaxSpread = 4.0;                                // Max spread to trade (pips)
-INPUT int WPR_Shift = 0;                                        // Shift
+INPUT short WPR_Shift = 0;                                      // Shift
 INPUT int WPR_OrderCloseTime = -20;                             // Order close time in mins (>0) or bars (<0)
 INPUT string __WPR_Indi_WPR_Parameters__ =
     "-- WPR strategy: WPR indicator params --";  // >>> WPR strategy: WPR indicator <<<
