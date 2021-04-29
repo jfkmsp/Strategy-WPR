@@ -45,7 +45,7 @@ struct Stg_WPR_Params : StgParams {
 
   // Struct constructors.
   Stg_WPR_Params(WPRParams &_iparams, StgParams &_sparams)
-      : iparams(indi_wpr_defaults, _iparams.tf), sparams(stg_wpr_defaults) {
+      : iparams(indi_wpr_defaults, _iparams.tf.GetTf()), sparams(stg_wpr_defaults) {
     iparams = _iparams;
     sparams = _sparams;
   }
