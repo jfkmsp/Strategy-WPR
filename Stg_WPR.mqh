@@ -96,39 +96,22 @@ class Stg_WPR : public Strategy {
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, float _level = 0.0f, int _shift = 0) {
     Indi_WPR *_indi = GetIndicator();
-    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _is_valid = _indi[_shift].IsValid() && _indi[_shift + 1].IsValid() && _indi[_shift + 2].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
-      double level = -50 - _level * Order::OrderDirection(_cmd);
+      IndicatorSignal _signals = _indi.GetSignals(4, _shift);
       switch (_cmd) {
         case ORDER_TYPE_BUY:
           // Buy: Value below level.
-          _result &= _indi[PREV][0] < level || _indi[PPREV][0] < level;
-          _result &= _indi.IsIncreasing(2);
-          if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi.IsIncreasing(3);
-            // Buy: crossing level upwards.
-            if (METHOD(_method, 1)) _result &= _indi[PPREV][0] > level || _indi[PREV][0] > level;
-            if (METHOD(_method, 2)) _result &= _indi[PREV][0] - _indi[CURR][0] > _indi[PPREV][0] - _indi[PREV][0];
-          }
-          /* @todo
-             //30. Williams Percent Range
-             if (iWPR(NULL,piwpr,piwprbar,1)<-80&&iWPR(NULL,piwpr,piwprbar,0)>=-80)
-             {f30=1;}
-             if (iWPR(NULL,piwpr,piwprbar,1)>-20&&iWPR(NULL,piwpr,piwprbar,0)<=-20)
-             {f30=-1;}
-          */
+          // Buy: crossing level upwards.
+          _result &= _indi[_shift][0] > -50 - _level && _indi.GetMin<double>(_shift, 4) < -50 - _level;
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           break;
         case ORDER_TYPE_SELL:
           // Sell: Value above level.
-          _result &= _indi[PREV][0] > level || _indi[PPREV][0] > level;
-          _result &= _indi.IsDecreasing(2);
-          if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi.IsDecreasing(3);
-            // Sell: crossing level downwards.
-            if (METHOD(_method, 1)) _result &= _indi[PPREV][0] < level || _indi[PREV][0] < level;
-            if (METHOD(_method, 2)) _result &= _indi[CURR][0] - _indi[PREV][0] > _indi[PREV][0] - _indi[PPREV][0];
-          }
+          // Sell: crossing level downwards.
+          _result &= _indi[_shift][0] < -50 + _level && _indi.GetMax<double>(_shift, 4) > -50 + _level;
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           break;
       }
     }
