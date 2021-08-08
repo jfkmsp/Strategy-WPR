@@ -18,6 +18,8 @@ INPUT float WPR_PriceStopLevel = 0;         // Price stop level
 INPUT int WPR_TickFilterMethod = 1;         // Tick filter method
 INPUT float WPR_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short WPR_Shift = 0;                  // Shift
+INPUT float WPR_OrderCloseLoss = 0;         // Order close loss
+INPUT float WPR_OrderCloseProfit = 0;       // Order close profit
 INPUT int WPR_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("WPR strategy: WPR indicator params");
 INPUT int WPR_Indi_WPR_Period = 14;  // Period
@@ -35,8 +37,11 @@ struct Stg_WPR_Params_Defaults : StgParams {
   Stg_WPR_Params_Defaults()
       : StgParams(::WPR_SignalOpenMethod, ::WPR_SignalOpenFilterMethod, ::WPR_SignalOpenLevel,
                   ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseFilter, ::WPR_SignalCloseLevel,
-                  ::WPR_PriceStopMethod, ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift,
-                  ::WPR_OrderCloseTime) {}
+                  ::WPR_PriceStopMethod, ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift) {
+    Set(STRAT_PARAM_OCL, WPR_OrderCloseLoss);
+    Set(STRAT_PARAM_OCP, WPR_OrderCloseProfit);
+    Set(STRAT_PARAM_OCT, WPR_OrderCloseTime);
+  }
 } stg_wpr_defaults;
 
 // Struct to define strategy parameters to override.
