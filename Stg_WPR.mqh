@@ -8,7 +8,7 @@ INPUT string __WPR_Parameters__ = "-- WPR strategy params --";  // >>> WPR <<<
 INPUT float WPR_LotSize = 0;                                    // Lot size
 INPUT int WPR_SignalOpenMethod = 2;                             // Signal open method (-127-127)
 INPUT float WPR_SignalOpenLevel = 20;                           // Signal open level
-INPUT int WPR_SignalOpenFilterMethod = 32;                       // Signal open filter method
+INPUT int WPR_SignalOpenFilterMethod = 32;                      // Signal open filter method
 INPUT int WPR_SignalOpenBoostMethod = 0;                        // Signal open boost method
 INPUT int WPR_SignalCloseMethod = 2;                            // Signal close method (-127-127)
 INPUT float WPR_SignalCloseLevel = 20;                          // Signal close level
@@ -96,24 +96,25 @@ class Stg_WPR : public Strategy {
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, float _level = 0.0f, int _shift = 0) {
     Indi_WPR *_indi = GetIndicator();
-    bool _is_valid = _indi[_shift].IsValid() && _indi[_shift + 1].IsValid() && _indi[_shift + 2].IsValid();
-    bool _result = _is_valid;
-    if (_is_valid) {
-      IndicatorSignal _signals = _indi.GetSignals(4, _shift);
-      switch (_cmd) {
-        case ORDER_TYPE_BUY:
-          // Buy: Value below level.
-          // Buy: crossing level upwards.
-          _result &= _indi[_shift][0] > -50 - _level && _indi.GetMin<double>(_shift, 4) < -50 - _level;
-          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
-          break;
-        case ORDER_TYPE_SELL:
-          // Sell: Value above level.
-          // Sell: crossing level downwards.
-          _result &= _indi[_shift][0] < -50 + _level && _indi.GetMax<double>(_shift, 4) > -50 + _level;
-          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
-          break;
-      }
+    bool _result = _indi.GetFlag(INDI_ENTRY_FLAG_IS_VALID);
+    if (!_result) {
+      // Returns false when indicator data is not valid.
+      return false;
+    }
+    IndicatorSignal _signals = _indi.GetSignals(4, _shift);
+    switch (_cmd) {
+      case ORDER_TYPE_BUY:
+        // Buy: Value below level.
+        // Buy: crossing level upwards.
+        _result &= _indi[_shift][0] > -50 - _level && _indi.GetMin<double>(_shift, 4) < -50 - _level;
+        _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
+        break;
+      case ORDER_TYPE_SELL:
+        // Sell: Value above level.
+        // Sell: crossing level downwards.
+        _result &= _indi[_shift][0] < -50 + _level && _indi.GetMax<double>(_shift, 4) > -50 + _level;
+        _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
+        break;
     }
     return _result;
   }
