@@ -11,6 +11,7 @@ INPUT float WPR_SignalOpenLevel = 20;       // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 32;  // Signal open filter method
 INPUT int WPR_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int WPR_SignalCloseMethod = 2;        // Signal close method (-127-127)
+INPUT int WPR_SignalCloseFilter = 0;        // Signal close filter (-127-127)
 INPUT float WPR_SignalCloseLevel = 20;      // Signal close level
 INPUT int WPR_PriceStopMethod = 1;          // Price stop method
 INPUT float WPR_PriceStopLevel = 0;         // Price stop level
@@ -33,8 +34,9 @@ struct Indi_WPR_Params_Defaults : WPRParams {
 struct Stg_WPR_Params_Defaults : StgParams {
   Stg_WPR_Params_Defaults()
       : StgParams(::WPR_SignalOpenMethod, ::WPR_SignalOpenFilterMethod, ::WPR_SignalOpenLevel,
-                  ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseLevel, ::WPR_PriceStopMethod,
-                  ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift, ::WPR_OrderCloseTime) {}
+                  ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseFilter, ::WPR_SignalCloseLevel,
+                  ::WPR_PriceStopMethod, ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift,
+                  ::WPR_OrderCloseTime) {}
 } stg_wpr_defaults;
 
 // Struct to define strategy parameters to override.
