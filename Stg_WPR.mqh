@@ -9,6 +9,7 @@ INPUT float WPR_LotSize = 0;                // Lot size
 INPUT int WPR_SignalOpenMethod = 2;         // Signal open method (-127-127)
 INPUT float WPR_SignalOpenLevel = 20;       // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 32;  // Signal open filter method
+INPUT int WPR_SignalOpenFilterTime = 6;     // Signal open filter time
 INPUT int WPR_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int WPR_SignalCloseMethod = 2;        // Signal close method (-127-127)
 INPUT int WPR_SignalCloseFilter = 0;        // Signal close filter (-127-127)
@@ -41,6 +42,7 @@ struct Stg_WPR_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCL, WPR_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, WPR_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, WPR_OrderCloseTime);
+    Set(STRAT_PARAM_SOFT, WPR_SignalOpenFilterTime);
   }
 } stg_wpr_defaults;
 
