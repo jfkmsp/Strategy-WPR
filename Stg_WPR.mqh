@@ -6,24 +6,24 @@
 // User input params.
 INPUT_GROUP("WPR strategy: strategy params");
 INPUT float WPR_LotSize = 0;                // Lot size
-INPUT int WPR_SignalOpenMethod = 2;         // Signal open method (-127-127)
-INPUT float WPR_SignalOpenLevel = 20;       // Signal open level
+INPUT int WPR_SignalOpenMethod = 0;         // Signal open method (-127-127)
+INPUT float WPR_SignalOpenLevel = 40;       // Signal open level
 INPUT int WPR_SignalOpenFilterMethod = 32;  // Signal open filter method
-INPUT int WPR_SignalOpenFilterTime = 6;     // Signal open filter time
+INPUT int WPR_SignalOpenFilterTime = 8;     // Signal open filter time
 INPUT int WPR_SignalOpenBoostMethod = 0;    // Signal open boost method
-INPUT int WPR_SignalCloseMethod = 2;        // Signal close method (-127-127)
-INPUT int WPR_SignalCloseFilter = 0;        // Signal close filter (-127-127)
-INPUT float WPR_SignalCloseLevel = 20;      // Signal close level
-INPUT int WPR_PriceStopMethod = 1;          // Price stop method
+INPUT int WPR_SignalCloseMethod = 0;        // Signal close method (-127-127)
+INPUT int WPR_SignalCloseFilter = 32;       // Signal close filter (-127-127)
+INPUT float WPR_SignalCloseLevel = 40;      // Signal close level
+INPUT int WPR_PriceStopMethod = 1;          // Price stop method (0-127)
 INPUT float WPR_PriceStopLevel = 0;         // Price stop level
 INPUT int WPR_TickFilterMethod = 1;         // Tick filter method
 INPUT float WPR_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short WPR_Shift = 0;                  // Shift
 INPUT float WPR_OrderCloseLoss = 0;         // Order close loss
 INPUT float WPR_OrderCloseProfit = 0;       // Order close profit
-INPUT int WPR_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
+INPUT int WPR_OrderCloseTime = -30;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("WPR strategy: WPR indicator params");
-INPUT int WPR_Indi_WPR_Period = 14;  // Period
+INPUT int WPR_Indi_WPR_Period = 18;  // Period
 INPUT int WPR_Indi_WPR_Shift = 0;    // Shift
 
 // Structs.
@@ -115,12 +115,16 @@ class Stg_WPR : public Strategy {
         // Buy: Value below level.
         // Buy: crossing level upwards.
         _result &= _indi[_shift][0] > -50 - _level && _indi.GetMin<double>(_shift, 4) < -50 - _level;
+        _result &= _indi.IsIncreasing(1, 0, _shift);
+        _result &= _indi.IsIncByPct(fabs(_level / 10), 0, _shift, 3);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         break;
       case ORDER_TYPE_SELL:
         // Sell: Value above level.
         // Sell: crossing level downwards.
         _result &= _indi[_shift][0] < -50 + _level && _indi.GetMax<double>(_shift, 4) > -50 + _level;
+        _result &= _indi.IsDecreasing(1, 0, _shift);
+        _result &= _indi.IsDecByPct(fabs(_level / 10), 0, _shift, 3);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         break;
     }
