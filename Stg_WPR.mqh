@@ -39,6 +39,7 @@ struct Stg_WPR_Params_Defaults : StgParams {
       : StgParams(::WPR_SignalOpenMethod, ::WPR_SignalOpenFilterMethod, ::WPR_SignalOpenLevel,
                   ::WPR_SignalOpenBoostMethod, ::WPR_SignalCloseMethod, ::WPR_SignalCloseFilter, ::WPR_SignalCloseLevel,
                   ::WPR_PriceStopMethod, ::WPR_PriceStopLevel, ::WPR_TickFilterMethod, ::WPR_MaxSpread, ::WPR_Shift) {
+    Set(STRAT_PARAM_LS, WPR_LotSize);
     Set(STRAT_PARAM_OCL, WPR_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, WPR_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, WPR_OrderCloseTime);
