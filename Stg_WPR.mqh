@@ -75,7 +75,7 @@ class Stg_WPR : public Strategy {
   Stg_WPR(StgParams &_sparams, TradeParams &_tparams, ChartParams &_cparams, string _name = "")
       : Strategy(_sparams, _tparams, _cparams, _name) {}
 
-  static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
+  static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
     WPRParams _indi_params(indi_wpr_defaults, _tf);
     StgParams _stg_params(stg_wpr_defaults);
@@ -90,7 +90,7 @@ class Stg_WPR : public Strategy {
     _stg_params.SetIndicator(new Indi_WPR(_indi_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
-    TradeParams _tparams(_magic_no, _log_level);
+    TradeParams _tparams;
     Strategy *_strat = new Stg_WPR(_stg_params, _tparams, _cparams, "WPR");
     return _strat;
   }
