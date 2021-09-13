@@ -76,7 +76,6 @@ class Stg_WPR : public Strategy {
                              stg_wpr_h8);
 #endif
     // Initialize indicator.
-    WPRParams wpr_params(_indi_params);
     _stg_params.SetIndicator(new Indi_WPR(_indi_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
