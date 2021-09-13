@@ -31,7 +31,7 @@ INPUT int WPR_Indi_WPR_Shift = 0;    // Shift
 // Defines struct with default user indicator values.
 struct Indi_WPR_Params_Defaults : WPRParams {
   Indi_WPR_Params_Defaults() : WPRParams(::WPR_Indi_WPR_Period, ::WPR_Indi_WPR_Shift) {}
-} indi_wpr_defaults;
+};
 
 // Defines struct with default user strategy values.
 struct Stg_WPR_Params_Defaults : StgParams {
@@ -45,7 +45,7 @@ struct Stg_WPR_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCT, WPR_OrderCloseTime);
     Set(STRAT_PARAM_SOFT, WPR_SignalOpenFilterTime);
   }
-} stg_wpr_defaults;
+};
 
 #ifdef __config__
 // Loads pair specific param values.
@@ -65,7 +65,9 @@ class Stg_WPR : public Strategy {
 
   static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
+    Indi_WPR_Params_Defaults indi_wpr_defaults;
     WPRParams _indi_params(indi_wpr_defaults, _tf);
+    Stg_WPR_Params_Defaults stg_wpr_defaults;
     StgParams _stg_params(stg_wpr_defaults);
 #ifdef __config__
     SetParamsByTf<WPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
