@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_WPR_Params_M5 : WPRParams {
-  Indi_WPR_Params_M5() : WPRParams(indi_wpr_defaults, PERIOD_M5) {
+struct Indi_WPR_Params_M5 : IndiWPRParams {
+  Indi_WPR_Params_M5() : IndiWPRParams(indi_wpr_defaults, PERIOD_M5) {
     period = 2;
     shift = 0;
   }
