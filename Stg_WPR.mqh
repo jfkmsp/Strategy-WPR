@@ -65,13 +65,9 @@ class Stg_WPR : public Strategy {
 
   static Stg_WPR *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
-    Indi_WPR_Params_Defaults indi_wpr_defaults;
-    IndiWPRParams _indi_params(indi_wpr_defaults, _tf);
     Stg_WPR_Params_Defaults stg_wpr_defaults;
     StgParams _stg_params(stg_wpr_defaults);
 #ifdef __config__
-    SetParamsByTf<IndiWPRParams>(_indi_params, _tf, indi_wpr_m1, indi_wpr_m5, indi_wpr_m15, indi_wpr_m30, indi_wpr_h1,
-                                 indi_wpr_h4, indi_wpr_h8);
     SetParamsByTf<StgParams>(_stg_params, _tf, stg_wpr_m1, stg_wpr_m5, stg_wpr_m15, stg_wpr_m30, stg_wpr_h1, stg_wpr_h4,
                              stg_wpr_h8);
 #endif
@@ -80,8 +76,16 @@ class Stg_WPR : public Strategy {
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_WPR(_stg_params, _tparams, _cparams, "WPR");
-    _strat.SetIndicator(new Indi_WPR(_indi_params));
     return _strat;
+  }
+
+  /**
+   * Event on strategy's init.
+   */
+  void OnInit() {
+    Indi_WPR_Params_Defaults indi_wpr_defaults;
+    IndiWPRParams _indi_params(indi_wpr_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    SetIndicator(new Indi_WPR(_indi_params));
   }
 
   /**
