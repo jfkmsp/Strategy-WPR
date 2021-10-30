@@ -28,11 +28,18 @@ INPUT int WPR_Indi_WPR_Shift = 0;    // Shift
 
 // Structs.
 
-// Defines struct with default user indicator values.
-struct Indi_WPR_Params_Defaults : IndiWPRParams {
-  Indi_WPR_Params_Defaults() : IndiWPRParams(::WPR_Indi_WPR_Period, ::WPR_Indi_WPR_Shift) {}
-};
+#ifdef __config__
+// Loads pair specific param values.
+#include "config/H1.h"
+#include "config/H4.h"
+#include "config/H8.h"
+#include "config/M1.h"
+#include "config/M15.h"
+#include "config/M30.h"
+#include "config/M5.h"
+#endif
 
+// Structs.
 // Defines struct with default user strategy values.
 struct Stg_WPR_Params_Defaults : StgParams {
   Stg_WPR_Params_Defaults()
@@ -46,17 +53,6 @@ struct Stg_WPR_Params_Defaults : StgParams {
     Set(STRAT_PARAM_SOFT, WPR_SignalOpenFilterTime);
   }
 };
-
-#ifdef __config__
-// Loads pair specific param values.
-#include "config/H1.h"
-#include "config/H4.h"
-#include "config/H8.h"
-#include "config/M1.h"
-#include "config/M15.h"
-#include "config/M30.h"
-#include "config/M5.h"
-#endif
 
 class Stg_WPR : public Strategy {
  public:
@@ -83,8 +79,8 @@ class Stg_WPR : public Strategy {
    * Event on strategy's init.
    */
   void OnInit() {
-    Indi_WPR_Params_Defaults indi_wpr_defaults;
-    IndiWPRParams _indi_params(indi_wpr_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    IndiWPRParams _indi_params(::WPR_Indi_WPR_Period, ::WPR_Indi_WPR_Shift);
+    _indi_params.SetTf(Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
     SetIndicator(new Indi_WPR(_indi_params));
   }
 
